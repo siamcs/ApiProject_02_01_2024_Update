@@ -155,11 +155,11 @@ namespace ApiProject_02_01_2024.Services.CustomerTypeService
                 lastNumber++;
                 nextCode = lastNumber;
             }
-            return nextCode.ToString("D3");
+            return nextCode.ToString("D2");
         }
-        public Task<bool> IsExistAsync(string name)
+        public async Task<bool> IsExistAsync(string name)
         {
-            throw new NotImplementedException();
+            return await _customerType.All().AnyAsync(x => x.CustomerTypeName == name);
         }
     }
 }

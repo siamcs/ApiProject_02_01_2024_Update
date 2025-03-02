@@ -3,6 +3,7 @@ using ApiProject_02_01_2024.Data;
 using ApiProject_02_01_2024.Repository;
 using ApiProject_02_01_2024.Services.BankService;
 using ApiProject_02_01_2024.Services.CustomerService;
+using ApiProject_02_01_2024.Services.CustomerTypeService;
 using ApiProject_02_01_2024.Services.DesignationService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,8 @@ builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericReposito
 builder.Services.AddScoped<IBankService, BankService>(); // Injecting the BankService
 builder.Services.AddScoped<IDesignationService, DesignationService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<ICustomerTypeService, CustomerTypeService>();
+
 
 builder.Services.AddHttpContextAccessor();
 

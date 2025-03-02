@@ -14,6 +14,6 @@ namespace ApiProject_02_01_2024.DTOs
         [Required]
         [StringLength(50)]
         public string? CustomerTypeName { get; set; } = string.Empty;
-        public IList<Customer>? Customers { get; set; }
+       
     }
 }

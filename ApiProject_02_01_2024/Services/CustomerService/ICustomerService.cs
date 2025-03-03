@@ -14,6 +14,6 @@ namespace ApiProject_02_01_2024.Services.CustomerService
         Task<List<CommonSelectModelVM>> DropDown();
         string GetLocalIP();
         string GetMacAddress();
-        Task<bool> IsExistAsync(string name, int code);
+        Task<bool> IsExistAsync(string name, string code);
     }
 }

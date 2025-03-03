@@ -313,9 +313,9 @@ namespace ApiProject_02_01_2024.Services.CustomerService
             return macAddress;
         }
 
-        public async Task<bool> IsExistAsync(string name, int code)
+        public async Task<bool> IsExistAsync(string name, string code)
         {
-            return await _customerRepository.All().AnyAsync(x => x.CustomerName == name && x.Id != code);
+            return await _customerRepository.All().AnyAsync(x => x.CustomerName == name && x.CustomerCode != code);
         }
 
        

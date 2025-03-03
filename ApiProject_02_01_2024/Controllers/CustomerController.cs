@@ -109,7 +109,7 @@ namespace ApiProject_02_01_2024.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                if (await _customerService.IsExistAsync(customerVM.CustomerName, customerVM.Id))
+                if (await _customerService.IsExistAsync(customerVM.CustomerName, customerVM.CustomerCode))
                 {
                     return Ok(new { isSuccess = false, message = $"Already  Exists!", isDuplicate = true });
                 }
@@ -139,7 +139,7 @@ namespace ApiProject_02_01_2024.Controllers
         {
             try
             {
-                if (await _customerService.IsExistAsync(customerVM.CustomerName,customerVM.Id))
+                if (await _customerService.IsExistAsync(customerVM.CustomerName,customerVM.CustomerCode))
                 {
                     return Ok(new { isSuccess = false, message = $"Already  Exists!", isDuplicate = true });
                 }
@@ -191,7 +191,7 @@ namespace ApiProject_02_01_2024.Controllers
         #endregion
 
         [HttpPost("DuplicateCheck")]
-        public async Task<IActionResult> DuplicateCheck(string name, int code)
+        public async Task<IActionResult> DuplicateCheck([FromQuery] string name,[FromQuery] string code)
         {
             if (await _customerService.IsExistAsync(name, code))
             {

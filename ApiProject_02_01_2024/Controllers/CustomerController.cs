@@ -1,6 +1,7 @@
 ﻿using ApiProject_02_01_2024.DTOs;
 using ApiProject_02_01_2024.Services.BankService;
 using ApiProject_02_01_2024.Services.CustomerService;
+using ApiProject_02_01_2024.Services.CustomerTypeService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -188,5 +189,18 @@ namespace ApiProject_02_01_2024.Controllers
         #endregion
 
         #endregion
+
+        [HttpPost("DuplicateCheck")]
+        public async Task<IActionResult> DuplicateCheck(string name, int code)
+        {
+            if (await _customerService.IsExistAsync(name, code))
+            {
+                return Ok(new { isSuccess = true, message = "Already Exists!" });
+            }
+
+            return Ok(new { isSuccess = false });
+        }
+
+
     }
 }

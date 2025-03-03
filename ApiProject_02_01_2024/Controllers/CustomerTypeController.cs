@@ -2,6 +2,7 @@
 
 using ApiProject_02_01_2024.Services.CustomerTypeService;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiProject_02_01_2024.Controllers
@@ -92,10 +93,10 @@ namespace ApiProject_02_01_2024.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                //if (await customerTypeService.IsExistAsync(customerTypeVM.CustomerTypeName, customerTypeVM.Id))
-                //{
-                //    return Ok(new { isSuccess = false, message = $"Already  Exists!", isDuplicate = true });
-                //}
+                if (await customerTypeService.IsExistAsync(customerTypeVM.CustomerTypeName, customerTypeVM.Id))
+                {
+                    return Ok(new { isSuccess = false, message = $"Already  Exists!", isDuplicate = true });
+                }
                 if (string.IsNullOrEmpty(customerTypeVM.CusTypeCode))
                 {
                     customerTypeVM.CusTypeCode = await customerTypeService.GenerateNextCusTypeCodeAsync();
@@ -121,10 +122,10 @@ namespace ApiProject_02_01_2024.Controllers
         {
             try
             {
-                //if (await _customerService.IsExistAsync(customerVM.CustomerName, customerVM.Id))
-                //{
-                //    return Ok(new { isSuccess = false, message = $"Already  Exists!", isDuplicate = true });
-                //}
+                if (await customerTypeService.IsExistAsync(customerTypeVM.CustomerTypeName, customerTypeVM.Id))
+                {
+                    return Ok(new { isSuccess = false, message = $"Already  Exists!", isDuplicate = true });
+                }
                 if (id != customerTypeVM.Id)
                 {
                     return BadRequest("");
@@ -170,6 +171,16 @@ namespace ApiProject_02_01_2024.Controllers
 
         #endregion
 
+        [HttpPost("DuplicateCheck")]
+        public async Task<IActionResult> DuplicateCheck(string name, int code)
+        {
+            if (await customerTypeService.IsExistAsync(name, code))
+            {
+                return Ok(new { isSuccess = true, message = "Already Exists!" });
+            }
+
+            return Ok(new { isSuccess = false });
+        }
 
     }
 }

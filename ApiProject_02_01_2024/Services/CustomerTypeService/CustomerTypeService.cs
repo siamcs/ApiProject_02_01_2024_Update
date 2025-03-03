@@ -157,9 +157,9 @@ namespace ApiProject_02_01_2024.Services.CustomerTypeService
             }
             return nextCode.ToString("D2");
         }
-        public async Task<bool> IsExistAsync(string name)
+        public async Task<bool> IsExistAsync(string name, int code)
         {
-            return await _customerType.All().AnyAsync(x => x.CustomerTypeName == name);
+            return await _customerType.All().AnyAsync(x => x.CustomerTypeName == name && x.Id !=code);
         }
     }
 }

@@ -12,6 +12,6 @@ namespace ApiProject_02_01_2024.Services.CustomerTypeService
         Task<bool> DeleteAsync(int id);
         Task<string> GenerateNextCusTypeCodeAsync();
       Task<IEnumerable<CommonSelectModelVM>> DropSelection();
-        Task<bool> IsExistAsync(string name, int code);
+        Task<bool> IsExistAsync(string name, string code);
     }
 }

@@ -125,7 +125,7 @@ namespace ApiProject_02_01_2024.Controllers
                     return StatusCode(500, "Failed to save.");
                 }
 
-                return Ok("Saved Successfully");
+                return Ok(new { isSuccess = true, message = "Saved Successfull" });
             }
             catch (Exception ex)
             {
@@ -154,7 +154,7 @@ namespace ApiProject_02_01_2024.Controllers
                     return StatusCode(500, "Failed to updat.");
                 }
 
-                return Ok("Updated Successfully");
+                return Ok( new { isSuccess = true, message = "Updated Successfully" });
             }
             catch (Exception ex)
             {
@@ -176,7 +176,7 @@ namespace ApiProject_02_01_2024.Controllers
 
 
 
-                return Ok("Deleted Successfully");
+                return Ok(new {isSuccess=true, message= "Deleted Successfully" }); 
             }
             catch (Exception ex)
             {
@@ -192,7 +192,7 @@ namespace ApiProject_02_01_2024.Controllers
 
         [HttpPost("DuplicateCheck")]
         public async Task<IActionResult> DuplicateCheck([FromQuery] string name,[FromQuery] string code)
-        {
+       {
             if (await _customerService.IsExistAsync(name, code))
             {
                 return Ok(new { isSuccess = true, message = "Already Exists!" });
@@ -201,6 +201,6 @@ namespace ApiProject_02_01_2024.Controllers
             return Ok(new { isSuccess = false });
         }
 
-
+        
     }
 }

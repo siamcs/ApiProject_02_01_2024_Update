@@ -43,18 +43,19 @@ namespace ApiProject_02_01_2024.Controllers
             try
             {
 
-                CustomerTypeVM designationVM = new CustomerTypeVM();
+                CustomerTypeVM customerTypeVM = new CustomerTypeVM();
 
                 if (id.HasValue && id > 0)
                 {
-                    designationVM = await customerTypeService.GetByIdAsync(id.Value);
-                    if (designationVM == null)
+                    customerTypeVM = await customerTypeService.GetByIdAsync(id.Value);
+                    if (customerTypeVM == null)
                     {
                         return NotFound();
                     }
                 }
 
-                return Ok(new { dataById = designationVM });
+                //  return Ok(new { dataById = customerTypeVM });
+                return Ok(new { dataById = customerTypeVM ?? new CustomerTypeVM() });
             }
             catch (Exception ex)
             {
@@ -65,14 +66,14 @@ namespace ApiProject_02_01_2024.Controllers
 
 
 
-        [HttpGet]
+        [HttpGet("All")]
         public async Task<IActionResult> Index()
         {
             try
             {
-                var designations = await customerTypeService.GetAllAsync();
+                var cusTypes = await customerTypeService.GetAllAsync();
 
-                return Ok(new { AllData = designations });
+                return Ok(new { AllData = cusTypes});
             }
             catch (Exception ex)
             {
@@ -93,7 +94,7 @@ namespace ApiProject_02_01_2024.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                if (await customerTypeService.IsExistAsync(customerTypeVM.CustomerTypeName, customerTypeVM.Id))
+                if (await customerTypeService.IsExistAsync(customerTypeVM.CustomerTypeName, customerTypeVM.CusTypeCode))
                 {
                     return Ok(new { isSuccess = false, message = $"Already  Exists!", isDuplicate = true });
                 }
@@ -108,8 +109,8 @@ namespace ApiProject_02_01_2024.Controllers
                 {
                     return StatusCode(500, "Failed to save.");
                 }
-
-                return Ok("Saved Successfully");
+                return Ok(new { isSuccess = true, message = "Saved Successfully" });
+                
             }
             catch (Exception ex)
             {
@@ -122,7 +123,7 @@ namespace ApiProject_02_01_2024.Controllers
         {
             try
             {
-                if (await customerTypeService.IsExistAsync(customerTypeVM.CustomerTypeName, customerTypeVM.Id))
+                if (await customerTypeService.IsExistAsync(customerTypeVM.CustomerTypeName, customerTypeVM.CusTypeCode))
                 {
                     return Ok(new { isSuccess = false, message = $"Already  Exists!", isDuplicate = true });
                 }
@@ -137,11 +138,12 @@ namespace ApiProject_02_01_2024.Controllers
                     return StatusCode(500, "Failed to updat.");
                 }
 
-                return Ok("Updated Successfully");
+                return Ok(new { isSuccess = true, message = "Updated Successfully" } );
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                Console.WriteLine(ex.Message);
+                return Ok(new { isSuccess = false, message = "Updated Error" });
             }
         }
 
@@ -159,11 +161,12 @@ namespace ApiProject_02_01_2024.Controllers
 
 
 
-                return Ok("Deleted Successfully");
+                return Ok(new {isSuccess=true, message="Deleted Successfully"});
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                Console.WriteLine(ex.Message);
+                return Ok(new { isSuccess = false, message = "Deleted Error" });
             }
         }
 
@@ -172,7 +175,7 @@ namespace ApiProject_02_01_2024.Controllers
         #endregion
 
         [HttpPost("DuplicateCheck")]
-        public async Task<IActionResult> DuplicateCheck(string name, int code)
+        public async Task<IActionResult> DuplicateCheck(string name, string code)
         {
             if (await customerTypeService.IsExistAsync(name, code))
             {

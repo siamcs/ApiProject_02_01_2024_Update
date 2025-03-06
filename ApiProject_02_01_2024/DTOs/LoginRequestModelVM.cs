@@ -1,4 +1,4 @@
-﻿namespace ApiProject_02_01_2024.Models
+﻿namespace ApiProject_02_01_2024.DTOs
 {
     public class LoginRequestModelVM
     {

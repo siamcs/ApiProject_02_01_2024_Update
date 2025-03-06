@@ -101,7 +101,7 @@ namespace ApiProject_02_01_2024.Services.CustomerTypeService
                 }
 
                 existingCustomerType.CustomerTypeName = customerTypeVM.CustomerTypeName;
-                existingCustomerType.CusTypeCode = await GenerateNextCusTypeCodeAsync();
+                existingCustomerType.CusTypeCode =customerTypeVM.CusTypeCode;
                 await _customerType.UpdateAsync(existingCustomerType);
                 await _customerType.CommitTransactionAsync();
                 return true;

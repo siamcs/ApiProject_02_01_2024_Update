@@ -1,11 +1,13 @@
 
 using ApiProject_02_01_2024.Data;
+using ApiProject_02_01_2024.Models;
 using ApiProject_02_01_2024.Repository;
 using ApiProject_02_01_2024.Services.BankService;
 using ApiProject_02_01_2024.Services.CustomerService;
 using ApiProject_02_01_2024.Services.CustomerTypeService;
 using ApiProject_02_01_2024.Services.DesignationService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -56,7 +58,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]))
         };
     });
-
+builder.Services.AddIdentity<User, IdentityRole>()
+     .AddEntityFrameworkStores<AppDBContext>()
+     .AddDefaultTokenProviders();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

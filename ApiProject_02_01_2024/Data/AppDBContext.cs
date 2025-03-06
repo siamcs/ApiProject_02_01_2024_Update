@@ -1,9 +1,10 @@
 ﻿using ApiProject_02_01_2024.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiProject_02_01_2024.Data
 {
-    public class AppDBContext:DbContext
+    public class AppDBContext: IdentityDbContext<User>
     {
         public AppDBContext(DbContextOptions<AppDBContext> options) : base(options)
         {
@@ -12,8 +13,13 @@ namespace ApiProject_02_01_2024.Data
         public DbSet<Designation> Designations { get; set; }
         public DbSet<HrmEmpDigitalSignature> HrmEmpDigitalSignatures { get; set; }
 
+        public DbSet<User>? Users { get; set; } // For IdentityUser
+        //public DbSet<LoginRequestModel> LoginRequests { get; set; }
+        //public DbSet<LoginModel> LoginModels { get; set; }
+        //public DbSet<RegisterModel> RegisterModels { get; set; }
         public DbSet<Customer>? Customers { get; set; }
         public DbSet<CustomerDeliveryAddress>  CustomerDeliveryAddresses { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

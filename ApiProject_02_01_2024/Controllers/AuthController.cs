@@ -1,5 +1,6 @@
-﻿using ApiProject_02_01_2024.Models;
-using Microsoft.AspNetCore.Http;
+﻿using ApiProject_02_01_2024.DTOs;
+using ApiProject_02_01_2024.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,43 +13,73 @@ namespace ApiProject_02_01_2024.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
         {
+            _userManager = userManager;
+            _signInManager = signInManager;
             _configuration = configuration;
         }
 
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequestModel loginRequest)
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register([FromBody] RegisterModelVM model)
         {
-            // Validate user credentials (replace this with your actual logic)
-            if (loginRequest.Username == "admin" && loginRequest.Password == "password") // Example validation
+            var user = new User
             {
-                var token = GenerateJwtToken(loginRequest.Username);
+                UserName = model.Email,
+                Email = model.Email,
+                FullName = model.FullName
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (result.Succeeded)
+            {
+                return Ok(new { message = "User registered successfully!" });
+            }
+
+            // Collect all error messages from IdentityResult.Errors
+            var errorMessages = result.Errors.Select(e => e.Description).ToList();
+            return BadRequest(new { errors = errorMessages });
+        }
+
+
+        // POST: api/Auth/Login
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginModelVM model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+
+            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+            {
+                var token = GenerateJwtToken(user);
                 return Ok(new { token });
             }
 
-            return Unauthorized("Invalid credentials");
+            return Unauthorized(new { message = "Invalid login credentials" });
         }
 
-        private string GenerateJwtToken(string username)
+        // Generate JWT Token
+        private string GenerateJwtToken(User user)
         {
-            var jwtSettings = _configuration.GetSection("JwtSettings");
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, username),
-                new Claim(ClaimTypes.Role, "Admin")  // You can add roles here as needed
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email)
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: jwtSettings["Issuer"],
-                audience: jwtSettings["Audience"],
+                issuer: _configuration["JwtSettings:Issuer"],
+                audience: _configuration["JwtSettings:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToInt32(jwtSettings["ExpirationMinutes"])),
+                expires: DateTime.Now.AddHours(1),
                 signingCredentials: creds
             );
 

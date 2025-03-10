@@ -79,7 +79,7 @@ namespace ApiProject_02_01_2024.Controllers
                 issuer: _configuration["JwtSettings:Issuer"],
                 audience: _configuration["JwtSettings:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(1),
+                expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: creds
             );
 
